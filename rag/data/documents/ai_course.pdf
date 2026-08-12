@@ -1,0 +1,199 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [5 0 R 7 0 R 9 0 R 11 0 R] /Count 4 >>
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+4 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >>
+endobj
+5 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents 6 0 R >>
+endobj
+6 0 obj
+<< /Length 3572 >>
+stream
+BT /F2 20 Tf 56 772 Td (AI Builders Bootcamp - Course Notes) Tj ET
+BT /F1 11 Tf 56 738 Td (These notes cover the core ideas behind modern language models: machine learning,) Tj ET
+BT /F1 11 Tf 56 723 Td (deep learning, neural networks, transformers, attention, embeddings and retrieval) Tj ET
+BT /F1 11 Tf 56 708 Td (augmented generation. They are the sample knowledge base for the practical RAG) Tj ET
+BT /F1 11 Tf 56 693 Td (sessions.) Tj ET
+BT /F2 14 Tf 56 662 Td (Chapter 1: Machine Learning) Tj ET
+BT /F1 11 Tf 56 635 Td (Machine learning is a field of artificial intelligence in which a program improves) Tj ET
+BT /F1 11 Tf 56 620 Td (its behaviour from data instead of from explicit rules written by a developer. A) Tj ET
+BT /F1 11 Tf 56 605 Td (traditional program encodes the rules directly; a machine learning system is shown) Tj ET
+BT /F1 11 Tf 56 590 Td (examples and derives the rules on its own by adjusting internal parameters.) Tj ET
+BT /F1 11 Tf 56 567 Td (There are three classic families of machine learning. Supervised learning trains on) Tj ET
+BT /F1 11 Tf 56 552 Td (labelled pairs of input and expected output, and is used for classification and) Tj ET
+BT /F1 11 Tf 56 537 Td (regression. Unsupervised learning receives unlabelled data and looks for structure,) Tj ET
+BT /F1 11 Tf 56 522 Td (for example by clustering similar items together. Reinforcement learning trains an) Tj ET
+BT /F1 11 Tf 56 507 Td (agent that takes actions in an environment and receives a reward signal, learning) Tj ET
+BT /F1 11 Tf 56 492 Td (the policy that maximises long term reward.) Tj ET
+BT /F1 11 Tf 56 469 Td (Training a model means minimising a loss function, a number that measures how wrong) Tj ET
+BT /F1 11 Tf 56 454 Td (the current predictions are. The optimiser computes the gradient of the loss with) Tj ET
+BT /F1 11 Tf 56 439 Td (respect to every parameter and nudges the parameters in the direction that lowers) Tj ET
+BT /F1 11 Tf 56 424 Td (the loss. This procedure is called gradient descent.) Tj ET
+BT /F1 11 Tf 56 405 Td (- Overfitting: the model memorises the training data and fails on new data.) Tj ET
+BT /F1 11 Tf 56 386 Td (- Underfitting: the model is too simple to capture the pattern in the data.) Tj ET
+BT /F1 11 Tf 56 367 Td (- Generalisation: performing well on data never seen during training.) Tj ET
+BT /F2 14 Tf 56 336 Td (Chapter 2: Deep Learning) Tj ET
+BT /F1 11 Tf 56 309 Td (Deep learning is the subset of machine learning that uses neural networks with many) Tj ET
+BT /F1 11 Tf 56 294 Td (stacked layers. The word deep refers to the number of layers between the input and) Tj ET
+BT /F1 11 Tf 56 279 Td (the output. Each layer transforms its input into a slightly more abstract) Tj ET
+BT /F1 11 Tf 56 264 Td (representation, so early layers capture simple local patterns such as edges or) Tj ET
+BT /F1 11 Tf 56 249 Td (character shapes while deeper layers capture high level concepts such as objects,) Tj ET
+BT /F1 11 Tf 56 234 Td (topics or intent.) Tj ET
+BT /F1 11 Tf 56 211 Td (The key advantage of deep learning over classical machine learning is representation) Tj ET
+BT /F1 11 Tf 56 196 Td (learning: the model discovers useful features automatically from raw data, so) Tj ET
+BT /F1 11 Tf 56 181 Td (engineers no longer need to design features by hand. The price is a much larger) Tj ET
+BT /F1 11 Tf 56 166 Td (appetite for data and compute, which is why deep learning became practical only once) Tj ET
+BT /F1 11 Tf 56 151 Td (GPUs and large public datasets were widely available.) Tj ET
+BT /F1 9 Tf 56 40 Td (Page 1 of 4) Tj ET
+endstream
+endobj
+7 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents 8 0 R >>
+endobj
+8 0 obj
+<< /Length 3354 >>
+stream
+BT /F2 14 Tf 56 774 Td (Chapter 3: Neural Networks) Tj ET
+BT /F1 11 Tf 56 747 Td (A neural network is a graph of simple computing units called neurons. A neuron) Tj ET
+BT /F1 11 Tf 56 732 Td (multiplies each of its inputs by a weight, adds a bias, and passes the result) Tj ET
+BT /F1 11 Tf 56 717 Td (through a non-linear activation function such as ReLU, sigmoid or GELU. Without the) Tj ET
+BT /F1 11 Tf 56 702 Td (non-linearity a stack of layers would collapse into a single linear transformation) Tj ET
+BT /F1 11 Tf 56 687 Td (and the network could not model complex relationships.) Tj ET
+BT /F1 11 Tf 56 664 Td (Learning happens through backpropagation. A forward pass computes the prediction and) Tj ET
+BT /F1 11 Tf 56 649 Td (the loss. The backward pass then applies the chain rule of calculus layer by layer,) Tj ET
+BT /F1 11 Tf 56 634 Td (from the output back to the input, to obtain the gradient of the loss with respect) Tj ET
+BT /F1 11 Tf 56 619 Td (to every weight. The optimiser, usually a variant of stochastic gradient descent) Tj ET
+BT /F1 11 Tf 56 604 Td (such as Adam, updates the weights using those gradients.) Tj ET
+BT /F1 11 Tf 56 585 Td (- Feedforward networks pass information in one direction only.) Tj ET
+BT /F1 11 Tf 56 566 Td (- Convolutional networks share weights across space and excel at images.) Tj ET
+BT /F1 11 Tf 56 547 Td (- Recurrent networks process sequences step by step and carry a hidden state.) Tj ET
+BT /F1 11 Tf 56 528 Td (- Transformers process a whole sequence in parallel using attention.) Tj ET
+BT /F2 14 Tf 56 497 Td (Chapter 4: Transformers) Tj ET
+BT /F1 11 Tf 56 470 Td (The transformer is the neural network architecture behind almost every modern large) Tj ET
+BT /F1 11 Tf 56 455 Td (language model. It was introduced in 2017 in the paper Attention Is All You Need.) Tj ET
+BT /F1 11 Tf 56 440 Td (Unlike recurrent networks, a transformer does not process tokens one after another;) Tj ET
+BT /F1 11 Tf 56 425 Td (it reads the entire sequence at once and lets every token look at every other token.) Tj ET
+BT /F1 11 Tf 56 410 Td (This makes training highly parallel on GPUs and removes the long dependency chains) Tj ET
+BT /F1 11 Tf 56 395 Td (that made recurrent networks forget distant context.) Tj ET
+BT /F1 11 Tf 56 372 Td (A transformer block contains a multi head self attention sublayer followed by a) Tj ET
+BT /F1 11 Tf 56 357 Td (small feedforward network, with residual connections and layer normalisation around) Tj ET
+BT /F1 11 Tf 56 342 Td (each sublayer. Because attention is order independent by nature, positional) Tj ET
+BT /F1 11 Tf 56 327 Td (information must be added explicitly, either as learned positional embeddings or) Tj ET
+BT /F1 11 Tf 56 312 Td (with a scheme such as rotary position embeddings.) Tj ET
+BT /F1 11 Tf 56 289 Td (Three variants of the architecture are common. Encoder only models such as BERT) Tj ET
+BT /F1 11 Tf 56 274 Td (produce rich representations of text and are used for classification, retrieval and) Tj ET
+BT /F1 11 Tf 56 259 Td (embeddings. Decoder only models such as the GPT family predict the next token and) Tj ET
+BT /F1 11 Tf 56 244 Td (are used for text generation. Encoder decoder models such as T5 map one sequence to) Tj ET
+BT /F1 11 Tf 56 229 Td (another and suit translation or summarisation.) Tj ET
+BT /F1 9 Tf 56 40 Td (Page 2 of 4) Tj ET
+endstream
+endobj
+9 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents 10 0 R >>
+endobj
+10 0 obj
+<< /Length 3555 >>
+stream
+BT /F2 14 Tf 56 774 Td (Chapter 5: The Attention Mechanism) Tj ET
+BT /F1 11 Tf 56 747 Td (Attention is the operation that lets a model decide, for every token, which other) Tj ET
+BT /F1 11 Tf 56 732 Td (tokens matter. Each token is projected into three vectors: a query, a key and a) Tj ET
+BT /F1 11 Tf 56 717 Td (value. The relevance of token j to token i is the dot product between the query of i) Tj ET
+BT /F1 11 Tf 56 702 Td (and the key of j. Those scores are divided by the square root of the head dimension) Tj ET
+BT /F1 11 Tf 56 687 Td (to keep them numerically stable, passed through a softmax so they sum to one, and) Tj ET
+BT /F1 11 Tf 56 672 Td (then used as weights to average the value vectors. This is called scaled dot product) Tj ET
+BT /F1 11 Tf 56 657 Td (attention.) Tj ET
+BT /F1 11 Tf 56 634 Td (Self attention means queries, keys and values all come from the same sequence, so) Tj ET
+BT /F1 11 Tf 56 619 Td (the sequence attends to itself. Cross attention means the queries come from one) Tj ET
+BT /F1 11 Tf 56 604 Td (sequence and the keys and values from another, which is how a decoder consults an) Tj ET
+BT /F1 11 Tf 56 589 Td (encoder. Multi head attention runs several attention operations in parallel with) Tj ET
+BT /F1 11 Tf 56 574 Td (different projections, so one head can track syntax while another tracks long range) Tj ET
+BT /F1 11 Tf 56 559 Td (topic information, and the results are concatenated and projected back.) Tj ET
+BT /F1 11 Tf 56 536 Td (In a decoder, attention is causally masked: a token may only attend to itself and to) Tj ET
+BT /F1 11 Tf 56 521 Td (tokens before it, otherwise the model could cheat by looking at the answer it is) Tj ET
+BT /F1 11 Tf 56 506 Td (being asked to predict. The cost of attention grows with the square of the sequence) Tj ET
+BT /F1 11 Tf 56 491 Td (length, which is the main reason context windows are limited and the main motivation) Tj ET
+BT /F1 11 Tf 56 476 Td (for efficient attention variants such as FlashAttention.) Tj ET
+BT /F2 14 Tf 56 445 Td (Chapter 6: Embeddings) Tj ET
+BT /F1 11 Tf 56 418 Td (An embedding is a dense vector of floating point numbers that represents a piece of) Tj ET
+BT /F1 11 Tf 56 403 Td (content in a way a machine can compare. A sentence embedding model maps a whole) Tj ET
+BT /F1 11 Tf 56 388 Td (sentence or paragraph to a single vector, typically with 384, 768 or 1536) Tj ET
+BT /F1 11 Tf 56 373 Td (dimensions, so that texts with similar meaning land close together in the vector) Tj ET
+BT /F1 11 Tf 56 358 Td (space even when they share no vocabulary.) Tj ET
+BT /F1 11 Tf 56 335 Td (Closeness is normally measured with cosine similarity, the cosine of the angle) Tj ET
+BT /F1 11 Tf 56 320 Td (between two vectors. It ranges from minus one for opposite meaning to one for) Tj ET
+BT /F1 11 Tf 56 305 Td (identical direction, and it ignores vector length, which makes it robust to) Tj ET
+BT /F1 11 Tf 56 290 Td (differences in text length. When vectors are normalised to unit length, cosine) Tj ET
+BT /F1 11 Tf 56 275 Td (similarity and the dot product are the same computation.) Tj ET
+BT /F1 11 Tf 56 252 Td (Embeddings are what make semantic search possible. A keyword index can only find) Tj ET
+BT /F1 11 Tf 56 237 Td (documents that literally contain the words of the query, so a question about a car) Tj ET
+BT /F1 11 Tf 56 222 Td (will not match a document about an automobile. An embedding index compares meaning,) Tj ET
+BT /F1 11 Tf 56 207 Td (so the two match even with no shared token.) Tj ET
+BT /F1 9 Tf 56 40 Td (Page 3 of 4) Tj ET
+endstream
+endobj
+11 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents 12 0 R >>
+endobj
+12 0 obj
+<< /Length 3074 >>
+stream
+BT /F2 14 Tf 56 774 Td (Chapter 7: Retrieval Augmented Generation) Tj ET
+BT /F1 11 Tf 56 747 Td (Retrieval augmented generation, usually shortened to RAG, is a pattern that gives a) Tj ET
+BT /F1 11 Tf 56 732 Td (language model access to knowledge it was never trained on. Instead of relying only) Tj ET
+BT /F1 11 Tf 56 717 Td (on the parameters learned during pretraining, the system searches an external) Tj ET
+BT /F1 11 Tf 56 702 Td (knowledge base at question time and puts the retrieved passages into the prompt as) Tj ET
+BT /F1 11 Tf 56 687 Td (context. The model then answers from that context.) Tj ET
+BT /F1 11 Tf 56 664 Td (RAG solves three concrete problems. It removes the knowledge cutoff, because the) Tj ET
+BT /F1 11 Tf 56 649 Td (knowledge base can be updated at any time without retraining. It reduces) Tj ET
+BT /F1 11 Tf 56 634 Td (hallucination, because the model is grounded in real passages and can be instructed) Tj ET
+BT /F1 11 Tf 56 619 Td (to refuse when the context does not contain the answer. And it makes answers) Tj ET
+BT /F1 11 Tf 56 604 Td (auditable, because every retrieved passage carries metadata such as the file name) Tj ET
+BT /F1 11 Tf 56 589 Td (and the page number, which can be shown as a source citation.) Tj ET
+BT /F1 11 Tf 56 566 Td (A RAG system has two pipelines. The offline indexing pipeline runs once per document) Tj ET
+BT /F1 11 Tf 56 551 Td (version: load the raw files, clean the text, split it into chunks, embed each chunk) Tj ET
+BT /F1 11 Tf 56 536 Td (and store the vectors in a vector index. The online query pipeline runs on every) Tj ET
+BT /F1 11 Tf 56 521 Td (question: embed the question, search the index for the nearest chunks, build a) Tj ET
+BT /F1 11 Tf 56 506 Td (prompt from those chunks and the question, and send it to the language model for) Tj ET
+BT /F1 11 Tf 56 491 Td (generation.) Tj ET
+BT /F1 11 Tf 56 468 Td (Chunking is the design decision with the largest effect on answer quality. Chunks) Tj ET
+BT /F1 11 Tf 56 453 Td (that are too small lose the context needed to be understood on their own; chunks) Tj ET
+BT /F1 11 Tf 56 438 Td (that are too large dilute the embedding, because a single vector has to represent) Tj ET
+BT /F1 11 Tf 56 423 Td (several unrelated ideas at once, and they waste space in the context window. A small) Tj ET
+BT /F1 11 Tf 56 408 Td (overlap between consecutive chunks keeps sentences that fall on a boundary from) Tj ET
+BT /F1 11 Tf 56 393 Td (being cut in half.) Tj ET
+BT /F1 11 Tf 56 370 Td (RAG is not the only way to adapt a model. Prompt engineering changes only the) Tj ET
+BT /F1 11 Tf 56 355 Td (instructions and is free but cannot add new facts. Fine tuning changes the weights) Tj ET
+BT /F1 11 Tf 56 340 Td (and is good for teaching a style, a format or a skill, but it is expensive and stale) Tj ET
+BT /F1 11 Tf 56 325 Td (facts stay baked in. RAG changes the knowledge available at inference time, which is) Tj ET
+BT /F1 11 Tf 56 310 Td (the right tool when the facts are private, large or frequently updated.) Tj ET
+BT /F1 9 Tf 56 40 Td (Page 4 of 4) Tj ET
+endstream
+endobj
+xref
+0 13
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000134 00000 n 
+0000000204 00000 n 
+0000000279 00000 n 
+0000000415 00000 n 
+0000004039 00000 n 
+0000004175 00000 n 
+0000007581 00000 n 
+0000007718 00000 n 
+0000011326 00000 n 
+0000011464 00000 n 
+trailer
+<< /Size 13 /Root 1 0 R /Info << /Title (AI Builders Bootcamp - Course Notes) >> >>
+startxref
+14591
+%%EOF

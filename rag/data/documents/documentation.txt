@@ -1,0 +1,299 @@
+FAISS - Vector Index Handbook
+Internal engineering notes  ::  v2.4  ::  Last updated: March 2026
+
+
+=====================================================
+1. OVERVIEW
+=====================================================
+
+FAISS   (Facebook AI Similarity Search) is a C++ library with Python bindings
+for nearest neighbour search over dense vectors.  It does one job: given a
+matrix of vectors and a query vector, return the k closest rows and their
+distances, as fast as the hardware allows.
+
+FAISS is a library, not a database.  It has no server, no metadata store and no
+persistence layer beyond writing an index file.  Anything else you need - the
+original text, the source file, the page number - you store yourself, aligned by
+row position.  That is the single most common source of confusion for teams
+coming from a hosted vector database.
+
+
+
+=====================================================
+2. INSTALLATION
+=====================================================
+
+Install the CPU build from PyPI:
+
+    pip install faiss-cpu
+
+For NVIDIA GPUs, install faiss-gpu instead (do not install both):
+
+    pip install faiss-gpu
+
+FAISS requires Python 3.8 or newer and numpy.  There is no Java, Docker or
+server process involved.  The import name is faiss regardless of which wheel
+you installed.
+
+
+
+=====================================================
+3. CREATING AN INDEX
+=====================================================
+
+Every index is created with a fixed dimension and a fixed metric.  Neither can
+be changed afterwards; you would have to build a new index and re-add.
+
+    import faiss
+
+    dimension = 384
+    index = faiss.IndexFlatIP(dimension)     # inner product
+    index = faiss.IndexFlatL2(dimension)     # squared euclidean distance
+
+The dimension must match the output size of your embedding model exactly.
+A mismatch raises an assertion error at add time, not at query time.
+
+Note that IndexFlatL2 returns SQUARED L2 distances, not L2 distances.  FAISS
+skips the square root because it does not change the ranking.  If you print
+those numbers in a UI, take the square root yourself.
+
+
+
+=====================================================
+4. ADDING VECTORS
+=====================================================
+
+Vectors must be a float32 numpy array of shape (n, dimension), C-contiguous.
+Anything else raises a type error or silently copies.
+
+    import numpy as np
+
+    vectors = np.asarray(embeddings, dtype="float32")
+    index.add(vectors)
+    print(index.ntotal)          # how many vectors are in the index
+
+FAISS assigns sequential integer ids: the first vector added is 0, the second
+is 1, and so on.  Row i of the index is row i of your chunk list.  Keep those
+two aligned or your citations will point at the wrong document while everything
+still looks like it works.
+
+To use your own ids, wrap the index:
+
+    index = faiss.IndexIDMap(faiss.IndexFlatIP(dimension))
+    index.add_with_ids(vectors, np.array(my_ids, dtype="int64"))
+
+Batch your adds.  One call with 100,000 vectors is far faster than 100,000
+calls with one vector each.
+
+
+
+=====================================================
+5. SEARCHING
+=====================================================
+
+    queries = np.asarray([query_vector], dtype="float32")   # shape (1, dim)
+    distances, indices = index.search(queries, k=5)
+
+Both return values have shape (n_queries, k).  Search is batched by design:
+searching 100 queries at once is much faster than 100 separate calls.
+
+If the index holds fewer than k vectors, the unused slots come back as -1 in
+indices and as a sentinel value in distances.  Always filter out -1 before
+looking anything up, or you will index your chunk list with -1 and silently get
+the last chunk.
+
+With METRIC_INNER_PRODUCT the score is higher-is-better.  With L2 it is
+lower-is-better.  Sorting the wrong way round is a five minute bug that looks
+exactly like a bad embedding model.
+
+
+
+=====================================================
+6. COSINE SIMILARITY
+=====================================================
+
+FAISS has no cosine metric.  You get cosine by normalising every vector to unit
+length and then using inner product, because for unit vectors the dot product
+is the cosine.
+
+    faiss.normalize_L2(vectors)          # in place, modifies the array
+    index = faiss.IndexFlatIP(dimension)
+    index.add(vectors)
+
+Normalise the queries too, with the same function.  Normalising the documents
+and forgetting the queries is the most common cause of "the scores look wrong
+but the ranking is almost right".
+
+sentence-transformers can do it for you at encode time with
+normalize_embeddings=True, which is what our pipeline does.
+
+
+
+=====================================================
+7. INDEX TYPES
+=====================================================
+
+IndexFlatIP / IndexFlatL2
+          Exact brute force.  Recall is always 100 percent.  No training
+          needed.  Use it below roughly 50,000 vectors, or whenever you need a
+          ground truth to compare an approximate index against.
+
+IndexIVFFlat
+          Inverted file index.  Partitions the space into nlist clusters with
+          k-means and searches only the nprobe closest clusters.  Must be
+          trained on a sample of the data before adding.  Raising nprobe
+          increases recall and latency together.
+
+              quantizer = faiss.IndexFlatIP(dimension)
+              index = faiss.IndexIVFFlat(quantizer, dimension, 256,
+                                         faiss.METRIC_INNER_PRODUCT)
+              index.train(vectors)        # required, and not optional
+              index.add(vectors)
+              index.nprobe = 8
+
+IndexHNSWFlat
+          Graph based index.  No training pass.  Tune it with M (graph degree,
+          default 32), efConstruction (build quality, default 40) and efSearch
+          (query quality, default 16).  Faster than IVF at the same recall,
+          but uses more memory and cannot remove vectors.
+
+              index = faiss.IndexHNSWFlat(dimension, 32)
+              index.hnsw.efConstruction = 200
+              index.hnsw.efSearch = 64
+
+IndexIVFPQ
+          IVF plus product quantisation: compresses each vector to a few bytes.
+          Use it when the vectors no longer fit in RAM.  Recall drops
+          noticeably; measure before you ship it.
+
+A useful rule of thumb: if index.is_trained is False, you forgot train().
+
+
+
+=====================================================
+8. PERSISTENCE
+=====================================================
+
+An index is written to a single file:
+
+    faiss.write_index(index, "storage/index.faiss")
+    index = faiss.read_index("storage/index.faiss")
+
+The file contains vectors and index structure ONLY.  It does not contain your
+text or your metadata.  Save those alongside it - we use chunks.json - and load
+both together, or you will have an index that can find row 47 and no way to
+tell you what row 47 says.
+
+There is no write-ahead log and no crash recovery.  Rebuilding from source
+documents is the recovery procedure.
+
+
+
+=====================================================
+9. GPU
+=====================================================
+
+    resources = faiss.StandardGpuResources()
+    gpu_index = faiss.index_cpu_to_gpu(resources, 0, index)
+
+Roughly a 5 to 10 times speedup on large batches.  Two limits to know: k may
+not exceed 2048 on GPU, and the index must fit in device memory.  Move it back
+with faiss.index_gpu_to_cpu before write_index.
+
+
+
+=====================================================
+10. OUR MEASURED BENCHMARKS
+=====================================================
+
+Measured on the bootcamp corpus: 100,000 vectors, 384 dimensions, float32,
+single laptop CPU core, k=5, averaged over 10 queries.  Your numbers will
+differ; the ratios are what matter.
+
+    numpy brute force (matrix multiply)      12.4 ms      recall 100%
+    IndexFlatIP                               3.1 ms      recall 100%
+    IndexIVFFlat  nlist=256  nprobe=1         0.4 ms      recall  62%
+    IndexIVFFlat  nlist=256  nprobe=8         0.9 ms      recall  94%
+    IndexIVFFlat  nlist=256  nprobe=32        2.2 ms      recall  99%
+    IndexHNSWFlat M=32  efSearch=64           0.6 ms      recall  97%
+
+In prose, because tables get mangled by copy-paste: our IndexIVFFlat runs at
+nprobe=8 reached 94 percent recall at 0.9 milliseconds per query, against 3.1
+milliseconds for the exact IndexFlatIP.  Dropping to nprobe=1 costs a lot of
+accuracy for little time, at 62 percent recall and 0.4 milliseconds.  Raising it
+to nprobe=32 gives 99 percent recall at 2.2 milliseconds, which is no longer
+meaningfully faster than exact search.
+
+Build times on the same machine: IndexFlatIP 0.1 s, IndexIVFFlat 6 s including
+training, IndexHNSWFlat 41 s.
+
+Conclusion we drew: below one million vectors, IndexFlatIP is fast enough and
+exact, and the operational simplicity is worth more than the milliseconds.
+
+
+
+=====================================================
+11. HOUSE DEFAULTS
+=====================================================
+
+Settings we use unless a project has measured a reason to differ:
+
+    embedding model        sentence-transformers/all-MiniLM-L6-v2  (384 dims)
+    chunk size             500 characters
+    chunk overlap          50 characters
+    index type             IndexFlatIP below 1,000,000 vectors
+    index type             IndexIVFFlat nlist=256 nprobe=8 above that
+    top_k                  4 passages sent to the model
+    min_score              0.35 cosine, below which we answer "I don't know"
+    re-index cadence       nightly, full rebuild from source documents
+
+The min_score of 0.35 was calibrated on 20 questions our corpus can answer and
+20 it cannot; it separated the two groups with two false refusals and no false
+answers.  Recalibrate it whenever you change the embedding model.
+
+
+
+=====================================================
+12. TROUBLESHOOTING
+=====================================================
+
+AssertionError on add
+    The array is not float32, not 2-D, or its second dimension does not match
+    the index dimension.  Check embeddings.dtype and embeddings.shape first.
+    Vectors from two different embedding models are never comparable, even
+    when they happen to have the same number of dimensions.
+
+RuntimeError: Index is not trained
+    You called add() on an IVF or PQ index before train().  Flat and HNSW
+    indexes need no training, which is why the error surprises people who
+    started with Flat.
+
+Empty or irrelevant results
+    Almost always a chunking or embedding problem rather than an index problem.
+    Verify that the same model embeds both documents and queries, and print the
+    raw text of the top matches before blaming FAISS.
+
+Scores above 1.0 with inner product
+    The vectors are not normalised, so you are reading dot products rather than
+    cosines.  Call faiss.normalize_L2 or encode with normalize_embeddings=True.
+
+Results contain -1
+    The index holds fewer vectors than k.  Filter them out.
+
+Out of memory
+    A 384 dimension float32 vector costs 1.5 KB, so 10 million vectors need
+    about 15 GB before any index overhead.  Move to IndexIVFPQ, or shard the
+    index across processes.
+
+
+
+=====================================================
+13. LIMITS
+=====================================================
+
+Maximum k on CPU                    no hard limit, but cost grows with k
+Maximum k on GPU                    2048
+Vector dtype accepted               float32 only
+Metrics supported                   METRIC_L2, METRIC_INNER_PRODUCT (+ others)
+Deletion support                    IDMap and IVF only, never HNSW
+Metadata storage                    none - you store it yourself
