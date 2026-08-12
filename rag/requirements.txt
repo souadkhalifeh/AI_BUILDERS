@@ -1,0 +1,18 @@
+pypdf
+numpy ==2.5.1
+sentence-trtansformers == 5.7.0
+transformers == 5.14.1
+huggingface_hub == 1.26.1
+scikit_learn == 1.9.0
+faiss-cpu == 1.15.0
+ollama == 0.6.2
+
+# Session 4 - the same pipeline through LangChain abstractions.
+# These wrap the libraries above; they do not replace them.
+langchain == 1.3.14
+langchain-core == 1.5.3
+langchain-text-splitters == 1.1.2
+langchain-huggingface == 1.2.2          # wraps sentence-transformers
+langchain-ollama == 1.1.0               # wraps the local Ollama server
+langchain-pymupdf4llm == 1.28.0         # optional: LangChain's PDF loader
+langchain-community == 0.4.2            # only for the FAISS vector store
